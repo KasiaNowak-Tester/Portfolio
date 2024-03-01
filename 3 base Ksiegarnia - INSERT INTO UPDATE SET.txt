@@ -1,0 +1,104 @@
+-- Znajdź w bazie:
+-- 1. Książki ułożone alfabetycznie wg tytułu
+	SELECT * FROM ksiazki ORDER BY tytul ASC
+
+-- 2. Najdroższą książkę w bazie
+	SELECT * FROM ksiazki ORDER BY cena DESC LIMIT 1
+
+-- 3. Wszystkie wysłane zamówienia
+	SELECT * FROM zamowienia WHERE status="wyslano"
+
+-- 4. Wszystkich klientów o nazwisku Rutkowski
+	SELECT * FROM klienci WHERE nazwisko="Rutkowski"
+
+-- 5. Książki zawierające wyrażenie "PHP" w tytule
+	SELECT * FROM ksiazki WHERE tytul LIKE "%PHP%"
+
+-- 6. Zamówienia ułożone od ostatnio dokonanego
+	SELECT * FROM zamowienia ORDER BY data DESC
+
+-- 7. Wyjmij dla wszystkich zamówień: imię i nazwisko klienta zamawiającego, id zamówienia, datę zamówienia
+	SELECT klienci.imie, 
+	       klienci.nazwisko, 
+	       zamowienia.idzamowienia, 
+	       zamowienia.data 
+	FROM klienci, zamowienia 
+	WHERE klienci.idklienta=zamowienia.idklienta
+-- with ALIAS
+	SELECT k.imie, k.nazwisko, z.idzamowienia, z.data
+	FROM klienci AS k, zamowienia AS z 
+	WHERE k.idklienta=z.idklienta
+
+-- 8. Imiona i nazwiska osób, które zamówiły kiedykolwiek książkę nr 2
+	SELECT k.imie, 
+	       k.nazwisko, 
+	       z.idksiazki 
+	FROM klienci AS k, zamowienia AS z 
+	WHERE z.idksiazki=2 AND z.idklienta=k.idklienta
+
+-- 9. Jakie książki (tytuł, autor) zamówiła osoba: Jan Nowak?
+	SELECT z.idzamowienia, 
+	       ks.tytul, 
+	       ks.imieautora, 
+	       ks.nazwiskoautora, 
+	       k.imie, k.nazwisko
+	FROM klienci AS k, zamowienia as z, ksiazki as ks
+	WHERE k.idklienta=z.idklienta 
+		AND ks.idksiazki=z.idksiazki 
+		AND k.imie="Jan" 
+		AND k.nazwisko="Nowak"
+
+-- 10. Zamówienia dokonane przez osoby o nazwisku Rutkowski ułożone wg daty od najpóźniej dokonanych 
+-- (imię i nazwisko osoby zamawiającej, id, datę i status zamówienia, tytuł zamówionej książki)
+	SELECT k.imie, 
+	       k.nazwisko, 
+	       z.idzamowienia, 
+	       z.data, 
+	       z.status, 
+	       ks.tytul 
+	FROM ksiazki ks, zamowienia z, klienci k
+	WHERE k.nazwisko="Rutkowski" 
+		AND k.idklienta=z.idklienta
+		AND ks.idksiazki=z.idksiazki
+			ORDER BY z.data DESC
+
+-- 11. Zmiana nazwiska klienta nr4 na "Psikuta"
+	UPDATE klienci SET nazwisko="Psikuta" 
+	WHERE idklienta=4
+ 
+-- 12. Zmień idklienta osoby nr 3 na wartość 1 //polecenie podpucha bo jest już w bazie klient z id=1
+	UPDATE klienci SET idklienta=1 
+	WHERE idklienta=3
+
+-- 13. Zwiększ cenę wszystkich książek zgromagdzonych w bazie o 10%
+	UPDATE ksiazki SET cena=ROUND(cena*1.1,2)
+
+-- 14. Zmniejsz cenę najdroższej książki o 10 zł
+	UPDATE ksiazki SET cena=cena-10 
+		ORDER BY cena DESC LIMIT 1
+
+-- 15. Zmień dane klientki Anny Kareriny na Joanna Dostojewska (idklienta=10)
+	UPDATE klienci SET imie="Joanna", nazwisko="Dostojewska" 
+	WHERE idklienta=10
+
+-- 16. Zmień status nr 4 i 5 zamówienia na "wyslano"
+	UPDATE zamowienia SET status="wyslano" 
+	WHERE idzamowienia BETWEEN 4 AND 5
+
+-- 17. Dodaj nowego klienta do bazy: Franciszek Janowski z Chorzowa
+	INSERT INTO klienci VALUES (NULL, "Franciszek", "Janowski", "Chorzów")
+
+-- 18. Dodaj nowe zamówienie" Artur Rutkowski kupił książkę "HTML5. Tworzenie witryn" (czyli p.Artur to klient nr 7, zamówił książkę nr 3; zapis do bazy nie w kolejności jak ułożona jest tabela)
+	INSERT INTO zamowienia (idzamowienia, data, status, idklienta, idksiazki) VALUES (NULL, "2023-04-11", "oczekiwanie", 7, 3)
+
+-- 19. Wstaw do bazy książkę o tytule "Symfonia C++" autora o nazwisku "Grębosz"
+	INSERT INTO ksiazki (idksiazki, nazwiskoautora, tytul) VALUES (NULL, "Grębosz", "Symfonia C++")
+
+-- 20. Dodaj dwóch nowych klientów za pomocą jednego zapytania
+	INSERT INTO klienci VALUES (NULL, "Marilyn", "Monroe", "Los Angeles"), (NULL, "John", "Wayne", "Los Angeles")
+
+-- 21. Wstaw nową osobę do bazy używając alternetywnego zapisu z klauzulą SET
+	INSERT INTO klienci SET idklienta=NULL, imie="Steve", nazwisko="McQueen", miejscowosc="Los Angeles"
+
+
+	

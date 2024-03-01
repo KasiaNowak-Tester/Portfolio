@@ -1,0 +1,4 @@
+C:\xampp\mysql\bin>mysql.exe -u root
+
+MariaDB [(none)]> use ksiegarnia
+MariaDB [(none)]> source slowa_kluczowe.sql
